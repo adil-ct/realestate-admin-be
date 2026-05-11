@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(New-Item -ItemType Directory -Force -Path \"d:\\\\Candour\\\\Realstate\\\\realestate-whitelabel-be-admin-development\\\\realestate-whitelabel-be-admin-development\\\\uploads\")",
+      "Bash(Out-Null)",
+      "Bash(Write-Host \"done\")",
+      "PowerShell(New-Item -ItemType Directory -Force -Path \"d:\\\\Candour\\\\Realstate\\\\realestate-whitelabel-be-admin-development\\\\realestate-whitelabel-be-admin-development\\\\uploads\")",
+      "Bash(npm install *)"
+    ]
+  }
+}

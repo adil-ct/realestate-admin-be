@@ -1,0 +1,1044 @@
+{
+  "info": {
+    "name": "BE-ADMIN Testing Flow Collection",
+    "description": "BE-ADMIN API Collection organized by testing flow phases. Follow the phases in order as per BE-ADMIN_TESTING_FLOW.md",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5000/api/v2",
+      "type": "string"
+    },
+    {
+      "key": "admin_token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Phase 1: Admin Authentication",
+      "description": "Service: be-admin only. Steps: Login → Profile → Update Profile → Password Reset",
+      "item": [
+        {
+          "name": "Step 1.1: Admin Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.data && jsonData.data.token) {",
+                  "        pm.collectionVariables.set('admin_token', jsonData.data.token);",
+                  "        console.log('✅ Admin Token saved:', jsonData.data.token);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@solulab.com\",\n  \"password\": \"Solulab@123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/login",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "login"]
+            },
+            "description": "First time login auto-creates admin with SUPER_ADMIN role"
+          },
+          "response": []
+        },
+        {
+          "name": "Step 1.2: Get Admin Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/profile",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "profile"]
+            },
+            "description": "Verify token is valid and get admin profile details"
+          },
+          "response": []
+        },
+        {
+          "name": "Step 1.3: Update Admin Profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Super Administrator\",\n  \"countryCode\": \"+1\",\n  \"mobileNumber\": \"1234567890\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/update-admin",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "update-admin"]
+            },
+            "description": "Update your own admin profile"
+          },
+          "response": []
+        },
+        {
+          "name": "Step 1.4: Forgot Password (Optional)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@solulab.com\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/forgotPassword",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "forgotPassword"]
+            },
+            "description": "Request password reset email"
+          },
+          "response": []
+        },
+        {
+          "name": "Step 1.5: Reset Password (Optional)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"reset_token_from_email\",\n  \"password\": \"NewPassword@123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/resetPassword",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "resetPassword"]
+            },
+            "description": "Reset password using token from email"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Phase 2: Admin Management (Super Admin Only)",
+      "description": "Service: be-admin only. Steps: Create Admin → List → Get/Update/Delete",
+      "item": [
+        {
+          "name": "Step 2.1: Create New Admin",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"newadmin@example.com\",\n  \"name\": \"John Doe\",\n  \"password\": \"Admin@123\",\n  \"countryCode\": \"+1\",\n  \"mobileNumber\": \"1234567890\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/create-admin",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "create-admin"]
+            },
+            "description": "Super Admin only - Create new admin user. Save the _id from response."
+          },
+          "response": []
+        },
+        {
+          "name": "Step 2.2: Get All Admins",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/get-admin-list?page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "get-admin-list"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Get paginated list of all admins"
+          },
+          "response": []
+        },
+        {
+          "name": "Step 2.3: Get Admin by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/:adminId",
+              "host": ["{{base_url}}"],
+              "path": ["admin", ":adminId"],
+              "variable": [
+                {
+                  "key": "adminId",
+                  "value": "65a1b2c3d4e5f6g7h8i9j0k2",
+                  "description": "Replace with actual admin ID from Step 2.1"
+                }
+              ]
+            },
+            "description": "Get specific admin details by ID"
+          },
+          "response": []
+        },
+        {
+          "name": "Step 2.4: Update Admin",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"Jane\",\n  \"permissions\": [\"VIEW_PROPERTIES\", \"MANAGE_USERS\", \"MANAGE_PROPERTIES\"]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/:adminId",
+              "host": ["{{base_url}}"],
+              "path": ["admin", ":adminId"],
+              "variable": [
+                {
+                  "key": "adminId",
+                  "value": "65a1b2c3d4e5f6g7h8i9j0k2",
+                  "description": "Replace with actual admin ID"
+                }
+              ]
+            },
+            "description": "Update admin details"
+          },
+          "response": []
+        },
+        {
+          "name": "Step 2.5: Delete Admin",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/:adminId",
+              "host": ["{{base_url}}"],
+              "path": ["admin", ":adminId"],
+              "variable": [
+                {
+                  "key": "adminId",
+                  "value": "65a1b2c3d4e5f6g7h8i9j0k2",
+                  "description": "Replace with actual admin ID to delete"
+                }
+              ]
+            },
+            "description": "Super Admin only - Delete admin user"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Phase 3: Investor Management",
+      "description": "Services: be-admin + be-user. Prerequisites: be-user running on port 3001, at least one user registered",
+      "item": [
+        {
+          "name": "Step 3.1: Get All Investors",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/getInvestorList?page=1&limit=10&search=",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "getInvestorList"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "search",
+                  "value": "",
+                  "description": "Optional search term"
+                }
+              ]
+            },
+            "description": "Get paginated investor list from be-user service"
+          },
+          "response": []
+        },
+        {
+          "name": "Step 3.2: Get Investor Details",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/investor/:investorId",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "investor", ":investorId"],
+              "variable": [
+                {
+                  "key": "investorId",
+                  "value": "65a1b2c3d4e5f6g7h8i9j0k3",
+                  "description": "Replace with actual investor/user ID"
+                }
+              ]
+            },
+            "description": "Get detailed investor profile and transaction history"
+          },
+          "response": []
+        },
+        {
+          "name": "Step 3.3: Get Investor Portfolio",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/investor-portfolio/:investorId",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "investor-portfolio", ":investorId"],
+              "variable": [
+                {
+                  "key": "investorId",
+                  "value": "65a1b2c3d4e5f6g7h8i9j0k3",
+                  "description": "Replace with actual investor ID"
+                }
+              ]
+            },
+            "description": "Get investor's property holdings and investments"
+          },
+          "response": []
+        },
+        {
+          "name": "Step 3.4: Blacklist Investor",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Fraudulent activity detected\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/blacklist-investor/:investorId",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "blacklist-investor", ":investorId"],
+              "variable": [
+                {
+                  "key": "investorId",
+                  "value": "65a1b2c3d4e5f6g7h8i9j0k3",
+                  "description": "Replace with investor ID to blacklist"
+                }
+              ]
+            },
+            "description": "Blacklist an investor"
+          },
+          "response": []
+        },
+        {
+          "name": "Step 3.5: Remove from Blacklist",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/blacklist-investor/:investorId",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "blacklist-investor", ":investorId"],
+              "variable": [
+                {
+                  "key": "investorId",
+                  "value": "65a1b2c3d4e5f6g7h8i9j0k3",
+                  "description": "Replace with investor ID to remove from blacklist"
+                }
+              ]
+            },
+            "description": "Remove investor from blacklist"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Phase 4: Property Management",
+      "description": "Service: be-admin only. Properties stored in mogul-admin database",
+      "item": [
+        {
+          "name": "Step 4.1: Get All Properties",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/property?page=1&limit=10&status=ACTIVE&search=",
+              "host": ["{{base_url}}"],
+              "path": ["property"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "status",
+                  "value": "ACTIVE",
+                  "description": "Optional: ACTIVE, DRAFT, COMPLETED"
+                },
+                {
+                  "key": "search",
+                  "value": "",
+                  "description": "Optional search term"
+                }
+              ]
+            },
+            "description": "Get paginated list of all properties"
+          },
+          "response": []
+        },
+        {
+          "name": "Step 4.2: Create New Property (Super Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Luxury Apartment Downtown\",\n  \"description\": \"Modern 2BHK apartment in city center with premium amenities\",\n  \"location\": {\n    \"address\": \"123 Main Street\",\n    \"city\": \"New York\",\n    \"state\": \"NY\",\n    \"zipCode\": \"10001\",\n    \"country\": \"USA\",\n    \"latitude\": 40.7128,\n    \"longitude\": -74.0060\n  },\n  \"propertyType\": \"APARTMENT\",\n  \"totalTokens\": 1000,\n  \"pricePerToken\": 100,\n  \"minimumInvestment\": 1000,\n  \"maximumInvestment\": 50000,\n  \"expectedReturn\": 12.5,\n  \"rentalYield\": 8.0,\n  \"appreciationRate\": 4.5,\n  \"startDate\": \"2025-01-20T00:00:00.000Z\",\n  \"endDate\": \"2025-12-20T00:00:00.000Z\",\n  \"images\": [\n    \"https://example.com/image1.jpg\",\n    \"https://example.com/image2.jpg\"\n  ],\n  \"documents\": [\n    {\n      \"name\": \"Property Deed\",\n      \"url\": \"https://example.com/deed.pdf\",\n      \"type\": \"LEGAL\"\n    }\n  ],\n  \"amenities\": [\"Swimming Pool\", \"Gym\", \"Parking\", \"Security\"],\n  \"highlights\": {\n    \"bedrooms\": 2,\n    \"bathrooms\": 2,\n    \"area\": 1200,\n    \"areaUnit\": \"sqft\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/property",
+              "host": ["{{base_url}}"],
+              "path": ["property"]
+            },
+            "description": "Super Admin only - Create new property. Save the _id from response."
+          },
+          "response": []
+        },
+        {
+          "name": "Step 4.3: Get Property Details",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/property/:propertyId",
+              "host": ["{{base_url}}"],
+              "path": ["property", ":propertyId"],
+              "variable": [
+                {
+                  "key": "propertyId",
+                  "value": "65a1b2c3d4e5f6g7h8i9j0k5",
+                  "description": "Replace with actual property ID from Step 4.2"
+                }
+              ]
+            },
+            "description": "Get complete property details by ID"
+          },
+          "response": []
+        },
+        {
+          "name": "Step 4.4: Update Property",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Updated description with more details\",\n  \"status\": \"ACTIVE\",\n  \"pricePerToken\": 105\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/property/:propertyId",
+              "host": ["{{base_url}}"],
+              "path": ["property", ":propertyId"],
+              "variable": [
+                {
+                  "key": "propertyId",
+                  "value": "65a1b2c3d4e5f6g7h8i9j0k5",
+                  "description": "Replace with property ID to update"
+                }
+              ]
+            },
+            "description": "Update property details"
+          },
+          "response": []
+        },
+        {
+          "name": "Step 4.5: Upload Property Files",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "files",
+                  "type": "file",
+                  "src": [],
+                  "description": "Select image/PDF files"
+                },
+                {
+                  "key": "propertyId",
+                  "value": "65a1b2c3d4e5f6g7h8i9j0k5",
+                  "type": "text",
+                  "description": "Property ID"
+                },
+                {
+                  "key": "fileType",
+                  "value": "PROPERTY_IMAGE",
+                  "type": "text",
+                  "description": "PROPERTY_IMAGE or DOCUMENT"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/property/file.upload",
+              "host": ["{{base_url}}"],
+              "path": ["property", "file.upload"]
+            },
+            "description": "Upload property images/documents (requires storage service)"
+          },
+          "response": []
+        },
+        {
+          "name": "Step 4.6: Delete Property",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/property/:propertyId",
+              "host": ["{{base_url}}"],
+              "path": ["property", ":propertyId"],
+              "variable": [
+                {
+                  "key": "propertyId",
+                  "value": "65a1b2c3d4e5f6g7h8i9j0k5",
+                  "description": "Replace with property ID to delete"
+                }
+              ]
+            },
+            "description": "Delete property (only if no investors have purchased tokens)"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Phase 5: Property Manager Management",
+      "description": "Service: be-admin only",
+      "item": [
+        {
+          "name": "Step 5.1: Get All Property Managers",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/propertyManager",
+              "host": ["{{base_url}}"],
+              "path": ["propertyManager"]
+            },
+            "description": "Get list of all property managers"
+          },
+          "response": []
+        },
+        {
+          "name": "Step 5.2: Create Property Manager",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"manager@example.com\",\n  \"firstName\": \"Mike\",\n  \"lastName\": \"Johnson\",\n  \"company\": \"Property Management Inc\",\n  \"phone\": \"+1234567890\",\n  \"address\": \"456 Manager Street, NY\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/propertyManager",
+              "host": ["{{base_url}}"],
+              "path": ["propertyManager"]
+            },
+            "description": "Create new property manager. Save the _id from response."
+          },
+          "response": []
+        },
+        {
+          "name": "Step 5.3: Get Property Manager Details",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/propertyManager/:managerId",
+              "host": ["{{base_url}}"],
+              "path": ["propertyManager", ":managerId"],
+              "variable": [
+                {
+                  "key": "managerId",
+                  "value": "65a1b2c3d4e5f6g7h8i9j0k6",
+                  "description": "Replace with actual manager ID from Step 5.2"
+                }
+              ]
+            },
+            "description": "Get manager details and assigned properties"
+          },
+          "response": []
+        },
+        {
+          "name": "Step 5.4: Update Property Manager",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"+9876543210\",\n  \"company\": \"Elite Property Management\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/propertyManager/:managerId",
+              "host": ["{{base_url}}"],
+              "path": ["propertyManager", ":managerId"],
+              "variable": [
+                {
+                  "key": "managerId",
+                  "value": "65a1b2c3d4e5f6g7h8i9j0k6",
+                  "description": "Replace with manager ID to update"
+                }
+              ]
+            },
+            "description": "Update property manager details"
+          },
+          "response": []
+        },
+        {
+          "name": "Step 5.5: Delete Property Manager",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/propertyManager/:managerId",
+              "host": ["{{base_url}}"],
+              "path": ["propertyManager", ":managerId"],
+              "variable": [
+                {
+                  "key": "managerId",
+                  "value": "65a1b2c3d4e5f6g7h8i9j0k6",
+                  "description": "Replace with manager ID to delete"
+                }
+              ]
+            },
+            "description": "Delete property manager"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Phase 6: Dashboard & Analytics",
+      "description": "Service: be-admin only",
+      "item": [
+        {
+          "name": "Step 6.1: Get Dashboard Stats",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/dashboard/stats",
+              "host": ["{{base_url}}"],
+              "path": ["dashboard", "stats"]
+            },
+            "description": "Get overall platform statistics and analytics"
+          },
+          "response": []
+        },
+        {
+          "name": "Step 6.2: Get Property Performance",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/dashboard/property-performance/:propertyId",
+              "host": ["{{base_url}}"],
+              "path": ["dashboard", "property-performance", ":propertyId"],
+              "variable": [
+                {
+                  "key": "propertyId",
+                  "value": "65a1b2c3d4e5f6g7h8i9j0k5",
+                  "description": "Replace with property ID to analyze"
+                }
+              ]
+            },
+            "description": "Get detailed performance metrics for a property"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Phase 7: Health Check",
+      "description": "Service: be-admin only. No authentication required",
+      "item": [
+        {
+          "name": "Step 7.1: Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/health",
+              "host": ["{{base_url}}"],
+              "path": ["health"]
+            },
+            "description": "Check if be-admin service is running properly"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "🔒 Blockchain Endpoints (Deferred)",
+      "description": "These require smart contracts, Fireblocks, and blockchain integration. Test later.",
+      "item": [
+        {
+          "name": "Mint Property Tokens (Super Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 1000,\n  \"metadataURI\": \"ipfs://QmXxxx...\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/property/:propertyId/mint",
+              "host": ["{{base_url}}"],
+              "path": ["property", ":propertyId", "mint"],
+              "variable": [
+                {
+                  "key": "propertyId",
+                  "value": "property_id_here"
+                }
+              ]
+            },
+            "description": "⚠️ Requires: Smart contracts deployed, Fireblocks configured"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Property Offering",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tokenPrice\": 100,\n  \"minInvestment\": 1000,\n  \"maxInvestment\": 50000,\n  \"startDate\": \"2025-01-20T00:00:00.000Z\",\n  \"endDate\": \"2025-02-20T00:00:00.000Z\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/property/:propertyId/offering",
+              "host": ["{{base_url}}"],
+              "path": ["property", ":propertyId", "offering"],
+              "variable": [
+                {
+                  "key": "propertyId",
+                  "value": "property_id_here"
+                }
+              ]
+            },
+            "description": "⚠️ Requires: OfferingManager contract integration"
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Rental Periods",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/cashflow/rental-period",
+              "host": ["{{base_url}}"],
+              "path": ["cashflow", "rental-period"]
+            },
+            "description": "Get all rental periods for cashflow tracking"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Rental Period (Super Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"propertyId\": \"property_id_here\",\n  \"startDate\": \"2025-01-01T00:00:00.000Z\",\n  \"endDate\": \"2025-01-31T23:59:59.000Z\",\n  \"expectedRent\": 50000,\n  \"status\": \"ACTIVE\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/cashflow/rental-period",
+              "host": ["{{base_url}}"],
+              "path": ["cashflow", "rental-period"]
+            },
+            "description": "Create rental period for rent collection tracking"
+          },
+          "response": []
+        },
+        {
+          "name": "Deposit Rent (Triggers Distribution)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rentalPeriodId\": \"rental_period_id_here\",\n  \"amount\": 50000,\n  \"depositDate\": \"2025-01-05T00:00:00.000Z\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/cashflow/deposit-rent",
+              "host": ["{{base_url}}"],
+              "path": ["cashflow", "deposit-rent"]
+            },
+            "description": "⚠️ Requires: DistributionModule contract. Triggers rent distribution to token holders."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Cashflow Transactions (Super Admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/cashflow/cashflow-transaction?propertyId=&type=",
+              "host": ["{{base_url}}"],
+              "path": ["cashflow", "cashflow-transaction"],
+              "query": [
+                {
+                  "key": "propertyId",
+                  "value": "",
+                  "description": "Optional property filter"
+                },
+                {
+                  "key": "type",
+                  "value": "",
+                  "description": "Optional: DEPOSIT or DISTRIBUTION"
+                }
+              ]
+            },
+            "description": "⚠️ Requires: Blockchain integration. Get blockchain cashflow transaction history."
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
