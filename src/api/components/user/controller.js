@@ -28,20 +28,20 @@ const ObjectId = mongoose.Types.ObjectId;
 export const earlyAccessList = async (req, res) => {
   try {
     logger.info('Inside early access list API controller');
-    const list = await sendgrid_getContactList();
-    if (list?.error) {
-      return handleError({ res, err: list.error });
-    }
-    const status = await getEarlyAccessStatus(list.response.emails);
-    if (status?.error) {
-      return handleError({ res, err: status.error });
-    }
-    const configData = await getConfig();
-    list.response.earlyAccessStatus = configData.earlyAccess;
-    list.response.emails = status;
+    // const list = await sendgrid_getContactList();
+    // if (list?.error) {
+    //   return handleError({ res, err: list.error });
+    // }
+    // const status = await getEarlyAccessStatus(list.response.emails);
+    // if (status?.error) {
+    //   return handleError({ res, err: status.error });
+    // }
+    // const configData = await getConfig();
+    // list.response.earlyAccessStatus = configData.earlyAccess;
+    // list.response.emails = status;
     return handleResponse({
       res,
-      data: list.response,
+      data: [],
       msg: messages.EARLY_ACCESS_INVESTOR_LIST,
     });
   } catch (err) {
@@ -234,14 +234,13 @@ export const affiliateUsers = async (req, res) => {
   }
 };
 
-
-export const getEarlyAccessUserList = async (req,res)=>{
+export const getEarlyAccessUserList = async (req, res) => {
   try {
-    logger.info('inside get early access user list API controller')
-    const users = await getAllEarlyInvestorListService()
+    logger.info('inside get early access user list API controller');
+    const users = await getAllEarlyInvestorListService();
     return handleResponse({ res, msg: 'Early access user list fetch successfully', data: users });
   } catch (error) {
     logger.error(err.message);
     return handleError({ res, err: err.message });
   }
-}
+};
