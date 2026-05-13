@@ -10,6 +10,7 @@ export const attomIdValidator = (attomId) => {
   if (validation.error) {
     error = validation.error.details[0].message;
     error = error.replace(/"/g, '');
+    error = error.replace(/\bmogul\s*/gi, '').replace(/\s+/g, ' ').trim();
     hasError = true;
   }
 
@@ -29,6 +30,7 @@ export const createPropertyValidator = (data) => {
   if (validation.error) {
     error = validation.error.details[0].message;
     error = error.replace(/"/g, '');
+    error = error.replace(/\bmogul\s*/gi, '').replace(/\s+/g, ' ').trim();
     hasError = true;
   }
 
@@ -125,8 +127,12 @@ export const updatePropertyValidator = (data) => {
       maintenanceReserve: Joi.number(),
       interest: Joi.number().optional(),
       vacancyReserve: Joi.number(),
-      mogulBuyerFee: Joi.number(),
-      mogulSellerFee: Joi.number(),
+      mogulBuyerFee: Joi.number().label('Buyer Fee').messages({
+        'number.base': 'Buyer Fee must be a number',
+      }),
+      mogulSellerFee: Joi.number().label('Seller Fee').messages({
+        'number.base': 'Seller Fee must be a number',
+      }),
       contingencyVar1: Joi.object(contingencyVar),
       contingencyVar2: Joi.object(contingencyVar),
       contingencyVar3: Joi.object(contingencyVar),
@@ -134,8 +140,12 @@ export const updatePropertyValidator = (data) => {
       currentEquity: Joi.number(),
       currentDebt: Joi.number(),
       sellerEquity: Joi.number(),
-      mogulEquityToBuy: Joi.number(),
-      mogulEquityToSell: Joi.number(),
+      mogulEquityToBuy: Joi.number().label('Equity To Buy').messages({
+        'number.base': 'Equity To Buy must be a number',
+      }),
+      mogulEquityToSell: Joi.number().label('Equity To Sell').messages({
+        'number.base': 'Equity To Sell must be a number',
+      }),
       platformResaleFee: Joi.number(),
       yearlyInvReturn: Joi.string(),
       projectedInvGain: Joi.string(),
@@ -233,6 +243,7 @@ export const updatePropertyValidator = (data) => {
   if (validation.error) {
     error = validation.error.details[0].message;
     error = error.replace(/"/g, '');
+    error = error.replace(/\bmogul\s*/gi, '').replace(/\s+/g, ' ').trim();
     hasError = true;
   }
 
@@ -416,6 +427,7 @@ export const updateMintedPropertyValidator = (data) => {
   if (validation.error) {
     error = validation.error.details[0].message;
     error = error.replace(/"/g, '');
+    error = error.replace(/\bmogul\s*/gi, '').replace(/\s+/g, ' ').trim();
     hasError = true;
   }
 
@@ -439,6 +451,7 @@ export const getAllPropertiesValidator = (data) => {
   if (validation.error) {
     error = validation.error.details[0].message;
     error = error.replace(/"/g, '');
+    error = error.replace(/\bmogul\s*/gi, '').replace(/\s+/g, ' ').trim();
     hasError = true;
   }
 
@@ -545,8 +558,14 @@ export const checkPropertyReadyToMint = (data) => {
       interest: Joi.number().optional(),
       maintenanceReserve: Joi.number(),
       vacancyReserve: Joi.number(),
-      mogulBuyerFee: Joi.number(),
-      mogulSellerFee: Joi.number(),
+      mogulBuyerFee: Joi.number().label('Buyer Fee').messages({
+        'number.base': 'Buyer Fee must be a number',
+        'any.required': 'Buyer Fee is required',
+      }),
+      mogulSellerFee: Joi.number().label('Seller Fee').messages({
+        'number.base': 'Seller Fee must be a number',
+        'any.required': 'Seller Fee is required',
+      }),
       contingencyVar1: Joi.object(contingencyVar).options({ presence: 'required' }).required().unknown(),
       contingencyVar2: Joi.object(contingencyVar).options({ presence: 'required' }).required().unknown(),
       contingencyVar3: Joi.object(contingencyVar).options({ presence: 'required' }).required().unknown(),
@@ -554,8 +573,14 @@ export const checkPropertyReadyToMint = (data) => {
       currentEquity: Joi.number(),
       currentDebt: Joi.number(),
       sellerEquity: Joi.number(),
-      mogulEquityToBuy: Joi.number(),
-      mogulEquityToSell: Joi.number(),
+      mogulEquityToBuy: Joi.number().label('Equity To Buy').messages({
+        'number.base': 'Equity To Buy must be a number',
+        'any.required': 'Equity To Buy is required',
+      }),
+      mogulEquityToSell: Joi.number().label('Equity To Sell').messages({
+        'number.base': 'Equity To Sell must be a number',
+        'any.required': 'Equity To Sell is required',
+      }),
       platformResaleFee: Joi.number(),
       yearlyInvReturn: Joi.string(),
       projectedInvGain: Joi.string(),
@@ -630,6 +655,7 @@ export const checkPropertyReadyToMint = (data) => {
   if (validation.error) {
     error = validation.error.details[0].message;
     error = error.replace(/"/g, '');
+    error = error.replace(/\bmogul\s*/gi, '').replace(/\s+/g, ' ').trim();
     hasError = true;
   }
 
