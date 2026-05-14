@@ -479,6 +479,7 @@ const updateListedProperty = async (owner, fundReceiverAddress, listingId, updat
       priceInWei,
       owner.blockchainAddress,
       fundReceiverAddress,
+      1,
     ]);
     if (result.error) {
       return { error: result.message };
