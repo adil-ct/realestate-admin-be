@@ -63,7 +63,7 @@ export const createPropertyManager = async (req, res) => {
     //   },
     //   blockchainAddress: venlyRes.value.address,
     // };
-    const vaultName = `usr-${req.user._id.toString()}`;
+    const vaultName = `usr-${propertyManager._id.toString()}`;
 
     const fireBlockVault = await createVault(vaultName);
 
