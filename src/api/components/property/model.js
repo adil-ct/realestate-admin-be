@@ -4,16 +4,17 @@ import db from '../../connections/dbMaster.js';
 const Schema = mongoose.Schema;
 const ObjectId = Schema.Types.ObjectId;
 
-const fileType = {
-  contentType: {
-    type: String,
+const fileType = new Schema(
+  {
+    contentType: { type: String },
+    key: { type: String },
+    path: { type: String },
+    url: { type: String },
+    sizeInMegaByte: { type: Number },
+    createdAt: { type: Date, default: () => new Date() },
   },
-  key: { type: String },
-  path: { type: String },
-  url: { type: String },
-  sizeInMegaByte: Number,
-  createdAt: { type: Date, default: () => new Date() },
-};
+  { _id: false }
+);
 
 const propertySchema = new Schema(
   {
