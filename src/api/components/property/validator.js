@@ -10,7 +10,10 @@ export const attomIdValidator = (attomId) => {
   if (validation.error) {
     error = validation.error.details[0].message;
     error = error.replace(/"/g, '');
-    error = error.replace(/\bmogul\s*/gi, '').replace(/\s+/g, ' ').trim();
+    error = error
+      .replace(/\bmogul\s*/gi, '')
+      .replace(/\s+/g, ' ')
+      .trim();
     hasError = true;
   }
 
@@ -30,7 +33,10 @@ export const createPropertyValidator = (data) => {
   if (validation.error) {
     error = validation.error.details[0].message;
     error = error.replace(/"/g, '');
-    error = error.replace(/\bmogul\s*/gi, '').replace(/\s+/g, ' ').trim();
+    error = error
+      .replace(/\bmogul\s*/gi, '')
+      .replace(/\s+/g, ' ')
+      .trim();
     hasError = true;
   }
 
@@ -152,7 +158,7 @@ export const updatePropertyValidator = (data) => {
       defaultRentGrowth: Joi.number(),
       defaultAnnualAppreciation: Joi.number(),
       defaultTokensPurchased: Joi.number(),
-      leveragedCashflowMargin: Joi.string(),
+      leveragedCashflowMargin: Joi.any(),
       defaultMonthlyRent: Joi.number(),
       maintenanceReserveBal: Joi.any(),
       vacancyReserveBal: Joi.any(),
@@ -243,7 +249,10 @@ export const updatePropertyValidator = (data) => {
   if (validation.error) {
     error = validation.error.details[0].message;
     error = error.replace(/"/g, '');
-    error = error.replace(/\bmogul\s*/gi, '').replace(/\s+/g, ' ').trim();
+    error = error
+      .replace(/\bmogul\s*/gi, '')
+      .replace(/\s+/g, ' ')
+      .trim();
     hasError = true;
   }
 
@@ -427,7 +436,10 @@ export const updateMintedPropertyValidator = (data) => {
   if (validation.error) {
     error = validation.error.details[0].message;
     error = error.replace(/"/g, '');
-    error = error.replace(/\bmogul\s*/gi, '').replace(/\s+/g, ' ').trim();
+    error = error
+      .replace(/\bmogul\s*/gi, '')
+      .replace(/\s+/g, ' ')
+      .trim();
     hasError = true;
   }
 
@@ -451,7 +463,10 @@ export const getAllPropertiesValidator = (data) => {
   if (validation.error) {
     error = validation.error.details[0].message;
     error = error.replace(/"/g, '');
-    error = error.replace(/\bmogul\s*/gi, '').replace(/\s+/g, ' ').trim();
+    error = error
+      .replace(/\bmogul\s*/gi, '')
+      .replace(/\s+/g, ' ')
+      .trim();
     hasError = true;
   }
 
@@ -655,7 +670,10 @@ export const checkPropertyReadyToMint = (data) => {
   if (validation.error) {
     error = validation.error.details[0].message;
     error = error.replace(/"/g, '');
-    error = error.replace(/\bmogul\s*/gi, '').replace(/\s+/g, ' ').trim();
+    error = error
+      .replace(/\bmogul\s*/gi, '')
+      .replace(/\s+/g, ' ')
+      .trim();
     hasError = true;
   }
 
