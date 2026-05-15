@@ -406,6 +406,7 @@ export const updateMintedPropertyValidator = (data) => {
     stripeConnect: Joi.string(),
     fireblocks: Joi.object().optional(),
     mintedAt: Joi.date().optional(),
+    rentalDocuments: Joi.array(),
   };
   const Schema = Joi.object(mainSchema).required();
 
